@@ -29,6 +29,17 @@ void UShelfController::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	// Poll the trigger volume every frame
+	if (PressurePlate->IsOverlappingActor(TriggerActor)) {
+		LowerShelf();
+	}
+}
+
+void UShelfController::LowerShelf() {
+	AActor* Owner = GetOwner();
+	FVector Location = Owner->GetActorLocation();
+	Location.Z = 80.0f;
+
+	Owner->SetActorLocation(Location, false);
 }
 

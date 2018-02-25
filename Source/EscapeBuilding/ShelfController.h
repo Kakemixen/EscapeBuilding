@@ -27,6 +27,15 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere)
-	ATriggerVolume* PressurePlate;	
+		ATriggerVolume* PressurePlate;	
+	UPROPERTY(EditAnywhere)
+		AActor* TriggerActor;
+
+	UPROPERTY(VisibleAnywhere)
+		float LoweredHeight  = 80.0f;
+	UPROPERTY(VisibleAnywhere)
+		float Height = 260.0f;
+
+	void LowerShelf();
 	
 };
