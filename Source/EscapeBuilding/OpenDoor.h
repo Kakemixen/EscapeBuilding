@@ -33,6 +33,12 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	float ClosedAngle = 180.0f;
 
-		
+	UPROPERTY(EditAnywhere)
+		AActor* TriggerActor; 
+	UPROPERTY(Editanywhere)
+		ATriggerVolume* PressurePlate;
+
+	void OpenDoor();
+	void CloseDoor();
 
 };

@@ -1,6 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "ShelfController.h"
+#include "GameFramework/Actor.h"
+#include "GameFramework/PlayerController.h"
+#include "Engine/World.h"
+
 
 
 // Sets default values for this component's properties
@@ -18,8 +22,11 @@ UShelfController::UShelfController()
 void UShelfController::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
+	//This is just for testing, replace with couch when you can move it
+	//UWorld* World = GetWorld();
+	//AController* Controller = World->GetFirstPlayerController();
+	AActor* PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
+	TriggerActor = PlayerPawn;
 	
 }
 

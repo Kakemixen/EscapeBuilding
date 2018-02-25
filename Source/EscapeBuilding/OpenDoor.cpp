@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "OpenDoor.h"
+#include "GameFramework/PlayerController.h"
+#include "Engine/World.h"
 #include "Gameframework/Actor.h"
 
 
@@ -18,16 +20,14 @@ UOpenDoor::UOpenDoor()
 // Called when the game starts
 void UOpenDoor::BeginPlay()
 {
+	
 	Super::BeginPlay();
 
-	//get owner
-	AActor* Owner = GetOwner();
+	//This is just for testing, replace with statue later
+	AActor* PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
+	TriggerActor = PlayerPawn;
 
-	//create rotator
-	FRotator NewRotation = FRotator(0.0f, 100.0f, 0.0f);
 
-	//set rotation
-	Owner->SetActorRotation(NewRotation);
 
 }
 
@@ -37,6 +37,27 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	if (PressurePlate->IsOverlappingActor(TriggerActor)) {
+		OpenDoor();
+	} else {
+		CloseDoor();
+	}
+}
+
+void UOpenDoor::OpenDoor() {
+	//get owner
+	AActor* Owner = GetOwner();
+	//create rotator
+	FRotator NewRotation = FRotator(0.0f, OpenAngle, 0.0f);
+	//set rotation
+	Owner->SetActorRotation(NewRotation);
+}
+void UOpenDoor::CloseDoor() {
+	//get owner
+	AActor* Owner = GetOwner();
+	//create rotator
+	FRotator NewRotation = FRotator(0.0f, ClosedAngle, 0.0f);
+	//set rotation
+	Owner->SetActorRotation(NewRotation);
 }
 
