@@ -5,17 +5,17 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Engine/TriggerVolume.h"
-#include "OpenDoor.generated.h"
+#include "ShelfController.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class ESCAPEBUILDING_API UOpenDoor : public UActorComponent
+class ESCAPEBUILDING_API UShelfController : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UOpenDoor();
+	UShelfController();
 
 protected:
 	// Called when the game starts
@@ -25,14 +25,8 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-
 private:
-	UPROPERTY(VisibleAnywhere)
-	float OpenAngle = 100.0f;
-
-	UPROPERTY(VisibleAnywhere)
-	float ClosedAngle = 180.0f;
-
-		
-
+	UPROPERTY(EditAnywhere)
+	ATriggerVolume* PressurePlate;	
+	
 };
