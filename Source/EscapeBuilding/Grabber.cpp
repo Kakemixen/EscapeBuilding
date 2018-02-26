@@ -4,6 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "GameFramework/PlayerController.h"
 #include "Engine/World.h"
+#include "DrawDebugHelpers.h"
 
 #define OUT 
 // Sets default values for this component's properties
@@ -42,8 +43,24 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 	);
 
 	//Log out every tick
-	UE_LOG(LogTemp, Log, TEXT("VPLoc: %s \tVPRot: %s"),
-		*ViewPointLoc.ToCompactString(), *ViewPointRot.ToCompactString());
+	/*UE_LOG(LogTemp, Log, TEXT("VPLoc: %s \tVPRot: %s"),
+		*ViewPointLoc.ToCompactString(), 
+		*ViewPointRot.ToCompactString()
+	);*/
+
+	FVector LineTraceEnd = ViewPointLoc + ViewPointRot.Vector()*Reach;
+
+	//Draw degub gvector
+	DrawDebugLine(
+		GetWorld(),
+		ViewPointLoc,
+		LineTraceEnd,
+		FColor(0, 0, 255),
+		false,
+		0.f,
+		0.f,
+		5.f
+	);
 
 	//Ray-Cast out to reach distance
 
