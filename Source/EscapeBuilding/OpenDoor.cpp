@@ -20,17 +20,9 @@ UOpenDoor::UOpenDoor()
 // Called when the game starts
 void UOpenDoor::BeginPlay()
 {
-	
 	Super::BeginPlay();
 
-	//This is just for testing, replace with statue later
-	AActor* PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
-	TriggerActor = PlayerPawn;
-
 	Owner = GetOwner();
-
-
-
 }
 
 
@@ -40,6 +32,7 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	float Seconds = GetWorld()->GetTimeSeconds();
+
 
 	if (PressurePlate->IsOverlappingActor(TriggerActor)) {
 		OpenDoor();

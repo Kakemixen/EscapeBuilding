@@ -27,15 +27,27 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere)
-		ATriggerVolume* PressurePlate;	
+		ATriggerVolume* PressurePlate1;
 	UPROPERTY(EditAnywhere)
-		AActor* TriggerActor;
+		ATriggerVolume* PressurePlate2;
+	UPROPERTY(EditAnywhere)
+		float MassThreshold1 = 80.f;
+	UPROPERTY(EditAnywhere)
+		float MassThreshold2_min = 9.5f;
+	UPROPERTY(EditAnywhere)
+		float MassThreshold2_max = 10.5f;
 
 	UPROPERTY(VisibleAnywhere)
-		float LoweredHeight  = 80.0f;
+		float LoweredHeight  = 0.0f;
 	UPROPERTY(VisibleAnywhere)
-		float Height = 260.0f;
+		float Height = 310.0f;
 
-	void LowerShelf();
+	void LowerObject();
+
+	void RaiseObject();
+
+	float GetTotalMassOnPlate1();
+
+	float GetTotalMassOnPlate2();
 	
 };

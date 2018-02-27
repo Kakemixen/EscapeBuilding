@@ -5,7 +5,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Engine/World.h"
 
-
+#define OUT
 
 // Sets default values for this component's properties
 UShelfController::UShelfController()
@@ -26,7 +26,6 @@ void UShelfController::BeginPlay()
 	//UWorld* World = GetWorld();
 	//AController* Controller = World->GetFirstPlayerController();
 	AActor* PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
-	TriggerActor = PlayerPawn;
 	
 }
 
@@ -37,16 +36,69 @@ void UShelfController::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// Poll the trigger volume every frame
-	if (PressurePlate->IsOverlappingActor(TriggerActor)) {
-		LowerShelf();
+	if (GetTotalMassOnPlate1() > MassThreshold1) {
+		if (GetTotalMassOnPlate2() > MassThreshold2_min && GetTotalMassOnPlate2() < MassThreshold2_max) {
+			RaiseObject();
+		}
+		else {
+			LowerObject();
+		}
+	}
+	else {
+		LowerObject();
 	}
 }
 
-void UShelfController::LowerShelf() {
+void UShelfController::LowerObject() {
 	AActor* Owner = GetOwner();
 	FVector Location = Owner->GetActorLocation();
-	Location.Z = 80.0f;
+	Location.Z = LoweredHeight;
 
 	Owner->SetActorLocation(Location, false);
 }
+
+void UShelfController::RaiseObject() {
+	AActor* Owner = GetOwner();
+	FVector Location = Owner->GetActorLocation();
+	Location.Z = Height;
+
+	Owner->SetActorLocation(Location, false);
+}
+
+float UShelfController::GetTotalMassOnPlate1() {
+	float TotalMass = 0.f;
+
+	TArray<AActor*> OverlappingActors = TArray<AActor*>();
+	//find overlapping actors
+	PressurePlate1->GetOverlappingActors(OUT OverlappingActors);
+	//add their masses
+	for (auto* Actor : OverlappingActors) {
+		//this produces a crash somehow, dunno why
+		float mass = Actor->FindComponentByClass<UPrimitiveComponent>()->GetMass();
+		TotalMass += mass;
+		UE_LOG(LogTemp, Warning, TEXT("%s wighing %f on pressureplate %s"),
+			*Actor->GetName(), mass,  *GetOwner()->GetName())
+	}
+	//UE_LOG(LogTemp, Warning, TEXT("actors %s"),TotalMass)
+	return TotalMass;
+}
+
+float UShelfController::GetTotalMassOnPlate2() {
+	float TotalMass = 0.f;
+
+	TArray<AActor*> OverlappingActors = TArray<AActor*>();
+	//find overlapping actors
+	PressurePlate2->GetOverlappingActors(OUT OverlappingActors);
+	//add their masses
+	for (auto* Actor : OverlappingActors) {
+		//this produces a crash somehow, dunno why
+		float mass = Actor->FindComponentByClass<UPrimitiveComponent>()->GetMass();
+		TotalMass += mass;
+		UE_LOG(LogTemp, Warning, TEXT("%s wighing %f on pressureplate %s"),
+			*Actor->GetName(), mass,  *GetOwner()->GetName())
+	}
+	//UE_LOG(LogTemp, Warning, TEXT("actors %s"),TotalMass)
+	return TotalMass;
+}
+
 
