@@ -60,16 +60,24 @@ void UGrabber::Grab() {
 	UE_LOG(LogTemp, Warning, TEXT("GARB"));
 
 	///Try and reach physics bodies
-	GetFirstPhysicsBodyInReach();
+	FHitResult Hit = GetFirstPhysicsBodyInReach();
 
 	///If we hit something, attach that physics
-	//TODO atach
-
+	//atach
+	if(Hit.GetActor()){
+		PhysicsHandle->GrabComponent(
+			Hit.GetComponent(),
+			NAME_None,
+			Hit.GetActor()->GetActorLocation(),
+			true
+		);
+	}
 }
 
 void UGrabber::Release() {
 	UE_LOG(LogTemp, Warning, TEXT("BARG"));
 	//TODO release physics body
+	PhysicsHandle->ReleaseComponent();
 
 }
 
@@ -78,6 +86,22 @@ void UGrabber::Release() {
 void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	//if grabber has attached object, move said object
+
+	if (PhysicsHandle->GrabbedComponent) {
+		/// get Player viewpoint this tick
+		FVector ViewPointLoc;
+		FRotator ViewPointRot;
+		GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
+			OUT ViewPointLoc,
+			OUT ViewPointRot
+		);
+
+		FVector LineTraceEnd = ViewPointLoc + ViewPointRot.Vector()*Reach;
+
+		PhysicsHandle->SetTargetLocation(LineTraceEnd);
+	}
 }
 
 
@@ -92,7 +116,7 @@ const FHitResult UGrabber::GetFirstPhysicsBodyInReach(){
 
 	FVector LineTraceEnd = ViewPointLoc + ViewPointRot.Vector()*Reach;
 
-	///Draw degub gvector
+	/*///Draw degub gvector
 	DrawDebugLine(
 		GetWorld(),
 		ViewPointLoc,
@@ -102,7 +126,7 @@ const FHitResult UGrabber::GetFirstPhysicsBodyInReach(){
 		0.f,
 		0.f,
 		5.f
-	);
+	);*/
 	///setup query params
 	FCollisionQueryParams TraceParams(FName(TEXT("")), false, GetOwner());
 
