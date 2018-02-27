@@ -40,4 +40,10 @@ private:
 	void Release();
 
 	const FHitResult GetFirstPhysicsBodyInReach();
+	
+	void GetViewPoint(FVector &Location, FRotator &Rotation);
+	FVector GetTraceStart();
+	FVector GetTraceEnd();
+
+	void DebugHitActor(FHitResult &Hit);
 };
