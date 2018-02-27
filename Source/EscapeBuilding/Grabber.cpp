@@ -23,8 +23,13 @@ void UGrabber::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UE_LOG(LogTemp, Warning, TEXT("Grapper reporting for duty!"));
+	FindPhysicsComponent();
+	SetUpInputComponent();
+	
+	
+}
 
+void UGrabber::FindPhysicsComponent() {
 	///Look for attached physics handler
 	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
 
@@ -33,10 +38,12 @@ void UGrabber::BeginPlay()
 		//Log Error Physicshandle not found
 		UE_LOG(LogTemp, Error, TEXT("%s missing physicshandle"), *GetOwner()->GetName());
 	}
+}
 
+void UGrabber::SetUpInputComponent(){
 	///Look for Input Component
 	InputComponent = GetOwner()->FindComponentByClass<UInputComponent>();
-	if (InputComponent) {	
+	if (InputComponent) {
 		UE_LOG(LogTemp, Warning, TEXT("%s has Input component"), *GetOwner()->GetName());
 		///Bind input action
 		InputComponent->BindAction("Grab", IE_Pressed, this, &UGrabber::Grab);
@@ -46,17 +53,23 @@ void UGrabber::BeginPlay()
 		//Log Error Physicshandle not found
 		UE_LOG(LogTemp, Error, TEXT("%s missing Input component"), *GetOwner()->GetName());
 	}
-	
-	
+
 }
 
 void UGrabber::Grab() {
 	UE_LOG(LogTemp, Warning, TEXT("GARB"));
 
+	///Try and reach physics bodies
+	GetFirstPhysicsBodyInReach();
+
+	///If we hit something, attach that physics
+	//TODO atach
+
 }
 
 void UGrabber::Release() {
 	UE_LOG(LogTemp, Warning, TEXT("BARG"));
+	//TODO release physics body
 
 }
 
@@ -65,12 +78,15 @@ void UGrabber::Release() {
 void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+}
 
+
+const FHitResult UGrabber::GetFirstPhysicsBodyInReach(){
 	/// get Player viewpoint this tick
 	FVector ViewPointLoc;
 	FRotator ViewPointRot;
 	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
-		OUT ViewPointLoc, 
+		OUT ViewPointLoc,
 		OUT ViewPointRot
 	);
 
@@ -108,5 +124,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 		UE_LOG(LogTemp, Warning, TEXT("Hitting %s,  from CM"),
 			*HitName, Distance)
 	}
+
+	return Hit;
 }
 

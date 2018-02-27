@@ -33,7 +33,11 @@ private:
 
 	UInputComponent* InputComponent = nullptr;
 
+	void FindPhysicsComponent();
+	void SetUpInputComponent();
+
 	void Grab();
 	void Release();
-	
+
+	const FHitResult GetFirstPhysicsBodyInReach();
 };
