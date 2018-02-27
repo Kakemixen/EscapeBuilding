@@ -28,16 +28,30 @@ void UGrabber::BeginPlay()
 	///Look for attached physics handler
 	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
 
-
-	if (PhysicsHandle) {
-		///Physicshandle found
-	}
+	if (PhysicsHandle) {/*Physicshandle found*/ }
 	else {
 		//Log Error Physicshandle not found
 		UE_LOG(LogTemp, Error, TEXT("%s missing physicshandle"), *GetOwner()->GetName());
 	}
+
+	///Look for Input Component
+	InputComponent = GetOwner()->FindComponentByClass<UInputComponent>();
+	if (InputComponent) {	
+		UE_LOG(LogTemp, Warning, TEXT("%s has Input component"), *GetOwner()->GetName());
+		///Bind input action
+		InputComponent->BindAction("Grab", IE_Pressed, this, &UGrabber::Grab);
+	}
+	else {
+		//Log Error Physicshandle not found
+		UE_LOG(LogTemp, Error, TEXT("%s missing Input component"), *GetOwner()->GetName());
+	}
 	
 	
+}
+
+void UGrabber::Grab() {
+	UE_LOG(LogTemp, Warning, TEXT("GARB"));
+
 }
 
 
