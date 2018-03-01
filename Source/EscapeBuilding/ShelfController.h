@@ -27,9 +27,9 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere)
-		ATriggerVolume* PressurePlate1;
+		ATriggerVolume* PressurePlate1 = nullptr;
 	UPROPERTY(EditAnywhere)
-		ATriggerVolume* PressurePlate2;
+		ATriggerVolume* PressurePlate2 = nullptr;
 	UPROPERTY(EditAnywhere)
 		float MassThreshold1 = 80.f;
 	UPROPERTY(EditAnywhere)
@@ -49,5 +49,7 @@ private:
 	float GetTotalMassOnPlate1();
 
 	float GetTotalMassOnPlate2();
+
+	bool up = false;
 	
 };

@@ -26,6 +26,8 @@ void UShelfController::BeginPlay()
 	//UWorld* World = GetWorld();
 	//AController* Controller = World->GetFirstPlayerController();
 	AActor* PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
+	if (!PressurePlate1) { UE_LOG(LogTemp, Error, TEXT("missing outer pressureplate")) }
+	if (!PressurePlate2) { UE_LOG(LogTemp, Error, TEXT("missing inner pressureplate")) }
 	
 }
 
@@ -50,6 +52,8 @@ void UShelfController::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 }
 
 void UShelfController::LowerObject() {
+	if (!up) { return; }
+	up = false;
 	AActor* Owner = GetOwner();
 	FVector Location = Owner->GetActorLocation();
 	Location.Z = LoweredHeight;
@@ -58,6 +62,8 @@ void UShelfController::LowerObject() {
 }
 
 void UShelfController::RaiseObject() {
+	if (up) { return; }
+	up = true;
 	AActor* Owner = GetOwner();
 	FVector Location = Owner->GetActorLocation();
 	Location.Z = Height;
@@ -70,6 +76,7 @@ float UShelfController::GetTotalMassOnPlate1() {
 
 	TArray<AActor*> OverlappingActors = TArray<AActor*>();
 	//find overlapping actors
+	if (!PressurePlate1) { return 0; }
 	PressurePlate1->GetOverlappingActors(OUT OverlappingActors);
 	//add their masses
 	for (auto* Actor : OverlappingActors) {
@@ -88,6 +95,7 @@ float UShelfController::GetTotalMassOnPlate2() {
 
 	TArray<AActor*> OverlappingActors = TArray<AActor*>();
 	//find overlapping actors
+	if (!PressurePlate2) { return 0; }
 	PressurePlate2->GetOverlappingActors(OUT OverlappingActors);
 	//add their masses
 	for (auto* Actor : OverlappingActors) {

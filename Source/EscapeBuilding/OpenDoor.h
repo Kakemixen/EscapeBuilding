@@ -25,6 +25,8 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	void CheckAndOpen();
+
 
 private:
 	UPROPERTY(VisibleAnywhere)
@@ -32,9 +34,9 @@ private:
 	UPROPERTY(VisibleAnywhere)
 		float ClosedAngle = 180.0f;
 	UPROPERTY(EditAnywhere)
-		AActor* TriggerActor; 
+		AActor* TriggerActor = nullptr; 
 	UPROPERTY(Editanywhere)
-		ATriggerVolume* PressurePlate;
+		ATriggerVolume* PressurePlate = nullptr;
 	UPROPERTY(EditAnywhere)
 		float CloseDelay = 5.f;
 
@@ -44,6 +46,6 @@ private:
 
 	//stuff
 	float LastOpened;
-	AActor* Owner;
+	AActor* Owner = nullptr;
 
 };

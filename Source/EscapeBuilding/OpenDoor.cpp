@@ -23,6 +23,9 @@ void UOpenDoor::BeginPlay()
 	Super::BeginPlay();
 
 	Owner = GetOwner();
+	if (!PressurePlate) { UE_LOG(LogTemp, Error, TEXT("missing door pressureplate")) }
+	if (!TriggerActor) { UE_LOG(LogTemp, Error, TEXT("missing door trigger actor")) }
+	if (!Owner) { UE_LOG(LogTemp, Error, TEXT("missing door Owner?")) }
 }
 
 
@@ -30,14 +33,19 @@ void UOpenDoor::BeginPlay()
 void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	
+	if (PressurePlate) { CheckAndOpen(); }
+}
 
+void UOpenDoor::CheckAndOpen()
+{
+	if (!TriggerActor) { return; }
 	float Seconds = GetWorld()->GetTimeSeconds();
-
-
 	if (PressurePlate->IsOverlappingActor(TriggerActor)) {
 		OpenDoor();
 		LastOpened = Seconds;
-	} else if (Seconds > LastOpened + CloseDelay) {
+	}
+	else if (Seconds > LastOpened + CloseDelay) {
 		CloseDoor();
 	}
 }
