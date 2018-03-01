@@ -40,21 +40,11 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 void UOpenDoor::CheckAndOpen()
 {
 	if (!TriggerActor) { return; }
-	float Seconds = GetWorld()->GetTimeSeconds();
 	if (PressurePlate->IsOverlappingActor(TriggerActor)) {
-		OpenDoor();
-		LastOpened = Seconds;
+		OnOpen.Broadcast();
 	}
-	else if (Seconds > LastOpened + CloseDelay) {
-		CloseDoor();
+	else  {
+		OnClose.Broadcast();
 	}
-}
-
-void UOpenDoor::OpenDoor() {
-	//Owner->SetActorRotation(FRotator(0.0f, OpenAngle, 0.0f));
-	OnOpenRequest.Broadcast();
-}
-void UOpenDoor::CloseDoor() {
-	Owner->SetActorRotation(FRotator(0.0f, ClosedAngle, 0.0f));
 }
 

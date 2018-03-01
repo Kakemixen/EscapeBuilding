@@ -26,8 +26,8 @@ void UShelfController::BeginPlay()
 	//UWorld* World = GetWorld();
 	//AController* Controller = World->GetFirstPlayerController();
 	AActor* PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
-	if (!PressurePlate1) { UE_LOG(LogTemp, Error, TEXT("missing outer pressureplate")) }
-	if (!PressurePlate2) { UE_LOG(LogTemp, Error, TEXT("missing inner pressureplate")) }
+	if (!PressurePlateOuter) { UE_LOG(LogTemp, Error, TEXT("missing outer pressureplate")) }
+	if (!PressurePlateInner) { UE_LOG(LogTemp, Error, TEXT("missing inner pressureplate")) }
 	
 }
 
@@ -38,72 +38,54 @@ void UShelfController::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// Poll the trigger volume every frame
-	if (GetTotalMassOnPlate1() > MassThreshold1) {
-		if (GetTotalMassOnPlate2() > MassThreshold2_min && GetTotalMassOnPlate2() < MassThreshold2_max) {
-			RaiseObject();
+	if (GetTotalMassOnOuterPlate() > MassThreshold1) {
+		if (GetTotalMassOnInnerPlate() > MassThreshold2_min && GetTotalMassOnInnerPlate() < MassThreshold2_max) {
+			OnOpen.Broadcast();
+			UE_LOG(LogTemp, Warning, TEXT("OPEN"));
 		}
 		else {
-			LowerObject();
+			OnClose.Broadcast();
 		}
 	}
 	else {
-		LowerObject();
+		OnClose.Broadcast();
 	}
 }
 
-void UShelfController::LowerObject() {
-	if (!up) { return; }
-	up = false;
-	AActor* Owner = GetOwner();
-	FVector Location = Owner->GetActorLocation();
-	Location.Z = LoweredHeight;
 
-	Owner->SetActorLocation(Location, false);
-}
-
-void UShelfController::RaiseObject() {
-	if (up) { return; }
-	up = true;
-	AActor* Owner = GetOwner();
-	FVector Location = Owner->GetActorLocation();
-	Location.Z = Height;
-
-	Owner->SetActorLocation(Location, false);
-}
-
-float UShelfController::GetTotalMassOnPlate1() {
+float UShelfController::GetTotalMassOnOuterPlate() {
 	float TotalMass = 0.f;
 
 	TArray<AActor*> OverlappingActors = TArray<AActor*>();
 	//find overlapping actors
-	if (!PressurePlate1) { return 0; }
-	PressurePlate1->GetOverlappingActors(OUT OverlappingActors);
+	if (!PressurePlateOuter) { return 0; }
+	PressurePlateOuter->GetOverlappingActors(OUT OverlappingActors);
 	//add their masses
-	for (auto* Actor : OverlappingActors) {
+	for (const auto* Actor : OverlappingActors) {
 		//this produces a crash somehow, dunno why
 		float mass = Actor->FindComponentByClass<UPrimitiveComponent>()->GetMass();
 		TotalMass += mass;
-		UE_LOG(LogTemp, Warning, TEXT("%s wighing %f on pressureplate %s"),
-			*Actor->GetName(), mass,  *GetOwner()->GetName())
+		UE_LOG(LogTemp, Warning, TEXT("%s wighing %f on pressureplate outer"),
+			*Actor->GetName(), mass)
 	}
 	//UE_LOG(LogTemp, Warning, TEXT("actors %s"),TotalMass)
 	return TotalMass;
 }
 
-float UShelfController::GetTotalMassOnPlate2() {
+float UShelfController::GetTotalMassOnInnerPlate() {
 	float TotalMass = 0.f;
 
 	TArray<AActor*> OverlappingActors = TArray<AActor*>();
 	//find overlapping actors
-	if (!PressurePlate2) { return 0; }
-	PressurePlate2->GetOverlappingActors(OUT OverlappingActors);
+	if (!PressurePlateInner) { return 0; }
+	PressurePlateInner->GetOverlappingActors(OUT OverlappingActors);
 	//add their masses
-	for (auto* Actor : OverlappingActors) {
+	for (const auto* Actor : OverlappingActors) {
 		//this produces a crash somehow, dunno why
 		float mass = Actor->FindComponentByClass<UPrimitiveComponent>()->GetMass();
 		TotalMass += mass;
-		UE_LOG(LogTemp, Warning, TEXT("%s wighing %f on pressureplate %s"),
-			*Actor->GetName(), mass,  *GetOwner()->GetName())
+		UE_LOG(LogTemp, Warning, TEXT("%s wighing %f on pressureplate inner"),
+			*Actor->GetName(), mass)
 	}
 	//UE_LOG(LogTemp, Warning, TEXT("actors %s"),TotalMass)
 	return TotalMass;

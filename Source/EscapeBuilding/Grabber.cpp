@@ -70,7 +70,7 @@ void UGrabber::SetUpInputComponent() {
 
 
 void UGrabber::Grab() {
-	UE_LOG(LogTemp, Warning, TEXT("GARB"));
+	//UE_LOG(LogTemp, Warning, TEXT("GARB"));
 
 	///Try and reach physics bodies
 	FHitResult Hit = GetFirstPhysicsBodyInReach();
@@ -78,17 +78,16 @@ void UGrabber::Grab() {
 	///If we hit something, attach that physics
 	//atach
 	if (Hit.GetActor()) {
-		PhysicsHandle->GrabComponent(
+		PhysicsHandle->GrabComponentAtLocation(
 			Hit.GetComponent(),
 			NAME_None,
-			Hit.GetActor()->GetActorLocation(),
-			true
+			Hit.GetActor()->GetActorLocation()
 		);
 	}
 }
 
 void UGrabber::Release() {
-	UE_LOG(LogTemp, Warning, TEXT("BARG"));
+	//UE_LOG(LogTemp, Warning, TEXT("BARG"));
 	//TODO release physics body
 	PhysicsHandle->ReleaseComponent();
 

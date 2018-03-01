@@ -8,6 +8,8 @@
 #include "ShelfController.generated.h"
 
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FWallEvent);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ESCAPEBUILDING_API UShelfController : public UActorComponent
 {
@@ -25,11 +27,17 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+
+	UPROPERTY(BlueprintAssignable)
+		FWallEvent OnOpen;
+	UPROPERTY(BlueprintAssignable)
+		FWallEvent OnClose;
+
 private:
 	UPROPERTY(EditAnywhere)
-		ATriggerVolume* PressurePlate1 = nullptr;
+		ATriggerVolume* PressurePlateOuter = nullptr;
 	UPROPERTY(EditAnywhere)
-		ATriggerVolume* PressurePlate2 = nullptr;
+		ATriggerVolume* PressurePlateInner = nullptr;
 	UPROPERTY(EditAnywhere)
 		float MassThreshold1 = 80.f;
 	UPROPERTY(EditAnywhere)
@@ -37,19 +45,9 @@ private:
 	UPROPERTY(EditAnywhere)
 		float MassThreshold2_max = 10.5f;
 
-	UPROPERTY(VisibleAnywhere)
-		float LoweredHeight  = 0.0f;
-	UPROPERTY(VisibleAnywhere)
-		float Height = 310.0f;
+	float GetTotalMassOnOuterPlate();
 
-	void LowerObject();
+	float GetTotalMassOnInnerPlate();
 
-	void RaiseObject();
-
-	float GetTotalMassOnPlate1();
-
-	float GetTotalMassOnPlate2();
-
-	bool up = false;
 	
 };
